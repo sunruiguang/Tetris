@@ -1,9 +1,8 @@
 package com.srg.cube.impl;
 
-import com.srg.cube.Cell;
+import com.srg.cube.Shape;
 
-public class Rectangle extends Cell {
+public class Rectangle extends Shape {
     public Rectangle(int x, int y) {
-        super(x, y);
     }
 }

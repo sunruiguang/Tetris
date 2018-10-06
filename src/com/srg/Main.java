@@ -1,5 +1,10 @@
 package com.srg;
 
+import com.srg.cube.Shape;
+import com.srg.cube.impl.LForm;
+import com.srg.cube.impl.TForm;
+import com.srg.cube.impl.ZForm;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +17,7 @@ public class Main extends JPanel {
     private static final int WIDTH = 500;
     private static final int HEIGHT = 950;
 
-    private static BufferedImage blue;
+    public static BufferedImage blue;
 
     private static int score;
 
@@ -43,10 +48,19 @@ public class Main extends JPanel {
         g.setColor(Color.RED);
         g.setFont(new Font("楷体", 25, 20));
         g.drawString("Score:" + score, 15, 30);
-        paintType();
+//        paintLFrom(g);
+        paintZFrom(g);
     }
 
-    private void paintType() {
+    private void paintZFrom(Graphics g) {
+        Shape shape = new ZForm((WIDTH - blue.getWidth() * 3) / 2, 0);
+        for (int i = 0; i < 4; i++)
+            g.drawImage(shape.image, shape.cell[i].x, shape.cell[i].y, null);
+    }
 
+    private void paintLFrom(Graphics g) {
+        Shape shape = new LForm(WIDTH / 2 - blue.getWidth(), 0);
+        for (int i = 0; i < 4; i++)
+            g.drawImage(shape.image, shape.cell[i].x, shape.cell[i].y, null);
     }
 }
