@@ -7,4 +7,8 @@ public class Cell{
         this.x = x;
         this.y = y;
     }
+
+    public void autoDown() {
+        y++;
+    }
 }

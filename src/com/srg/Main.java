@@ -10,6 +10,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Main extends JPanel {
 
@@ -19,7 +22,8 @@ public class Main extends JPanel {
     public static BufferedImage blue;
 
     private static int score;
-    private static Shape shape;
+    private static Shape[] shapes = {};
+    private int index = 0;
 
     static {
         try {
@@ -39,6 +43,50 @@ public class Main extends JPanel {
         jFrame.setResizable(false);//set can't be changed
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setVisible(true);//show the windows
+        main.start();
+    }
+
+    private void start() {
+        int interval = 10;
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                enterAction();
+                moveAction();
+
+                repaint();
+            }
+        }, interval, interval);
+    }
+
+    private void moveAction() {
+        for(Shape shape : shapes){
+            shape.autoDown();
+        }
+    }
+
+    private void enterAction() {
+        if (index++ % 500 == 0) {
+            Shape shape = nextOne();
+            shapes = Arrays.copyOf(shapes, shapes.length + 1);
+            shapes[shapes.length - 1] = shape;
+        }
+    }
+
+    private Shape nextOne() {
+        int flag = (int) (Math.random() * 5);
+        switch (flag) {
+            case 0:
+                return new LForm(WIDTH / 2 - blue.getWidth(), 0);
+            case 1:
+                return new Rectangle((WIDTH - blue.getWidth()) / 2, 0);
+            case 2:
+                return new Square(WIDTH / 2 - blue.getWidth(), 0);
+            case 3:
+                return new TForm((WIDTH - blue.getWidth() * 3) / 2, 0);
+        }
+        return new ZForm((WIDTH - blue.getWidth() * 3) / 2, 0);
     }
 
     @Override
@@ -47,33 +95,33 @@ public class Main extends JPanel {
         g.setColor(Color.RED);
         g.setFont(new Font("楷体", 25, 20));
         g.drawString("Score:" + score, 15, 30);
-
-        int flag = (int) (Math.random() * 5);
-        paintType(g, flag);
+        paintType(g);
     }
 
-    private void paintType(Graphics g, int flag) {
-
-        switch (flag) {
-            case 0:
-                shape = new LForm(WIDTH / 2 - blue.getWidth(), 0);
-                break;
-            case 1:
-                shape = new ZForm((WIDTH - blue.getWidth() * 3) / 2, 0);
-                break;
-            case 2:
-                shape = new Rectangle((WIDTH - blue.getWidth()) / 2, 0);
-                break;
-            case 3:
-                shape = new TForm((WIDTH - blue.getWidth() * 3) / 2, 0);
-                break;
-            case 4:
-                shape = new Square((WIDTH - blue.getWidth() * 2) / 2, 0);
-                break;
-            default:
-                break;
+    private void paintType(Graphics g) {
+        for (Shape shape : shapes) {
+            if (shape instanceof LForm) {
+                LForm lForm = (LForm) shape;
+                for (int i = 0; i < 4; i++)
+                    g.drawImage(lForm.image, lForm.cell[i].x, lForm.cell[i].y, null);
+            } else if (shape instanceof Rectangle) {
+                Rectangle rectangle = (Rectangle) shape;
+                for (int i = 0; i < 4; i++)
+                    g.drawImage(rectangle.image, rectangle.cell[i].x, rectangle.cell[i].y, null);
+            } else if (shape instanceof Square) {
+                Square square = (Square) shape;
+                for (int i = 0; i < 4; i++)
+                    g.drawImage(square.image, square.cell[i].x, square.cell[i].y, null);
+            } else if (shape instanceof TForm) {
+                TForm tForm = (TForm) shape;
+                for (int i = 0; i < 4; i++)
+                    g.drawImage(tForm.image, tForm.cell[i].x, tForm.cell[i].y, null);
+            } else if (shape instanceof ZForm) {
+                ZForm zForm = (ZForm) shape;
+                for (int i = 0; i < 4; i++)
+                    g.drawImage(zForm.image, zForm.cell[i].x, zForm.cell[i].y, null);
+            }
         }
-        for (int i = 0; i < 4; i++)
-            g.drawImage(shape.image, shape.cell[i].x, shape.cell[i].y, null);
+
     }
 }
