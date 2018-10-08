@@ -1,5 +1,6 @@
 package com.srg;
 
+import com.srg.cube.Cell;
 import com.srg.cube.Shape;
 import com.srg.cube.impl.*;
 import com.srg.cube.impl.Rectangle;
@@ -47,31 +48,49 @@ public class Main extends JPanel {
     }
 
     private void start() {
-        int interval = 10;
+        int interval = 5;
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 enterAction();
                 moveAction();
-
+                checkAction();
                 repaint();
             }
         }, interval, interval);
     }
 
+    private void checkAction() {
+
+    }
+
     private void moveAction() {
-        for(Shape shape : shapes){
-            shape.autoDown();
+        for (Shape shape : shapes) {
+            int maxY = 0;
+            for (Cell cell : shape.cell)
+                if (maxY < cell.y) maxY = cell.y;
+            if (maxY != HEIGHT - 70)
+                shape.autoDown();
         }
     }
 
     private void enterAction() {
-        if (index++ % 500 == 0) {
+        if (isArrivedBorder()) {
             Shape shape = nextOne();
             shapes = Arrays.copyOf(shapes, shapes.length + 1);
             shapes[shapes.length - 1] = shape;
         }
+    }
+
+    private boolean isArrivedBorder() {
+        for (Shape shape : shapes) {
+            int maxY = 0;
+            for (Cell cell : shape.cell)
+                if (maxY < cell.y) maxY = cell.y;
+            if (maxY != HEIGHT - 70) return false;
+        }
+        return true;
     }
 
     private Shape nextOne() {
